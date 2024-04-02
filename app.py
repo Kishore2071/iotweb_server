@@ -2,8 +2,11 @@ from flask import Flask
 from flask import Flask, redirect, url_for, request, render_template
 import os
 import math
+import base64
+
 app = Flask(__name__)
 basename = '/iotcloud'
+
 
 @app.route(basename+"/hello_world")
 def hello_world():
@@ -23,59 +26,14 @@ def hello():
 def whoami():
    return os.popen('whoami').read()
 
-@app.route(basename+'/cpuinfo')
-def cpuinfo():
-   if isadmin() == "yes":
-      return redirect(url_for('error', errorcode=1000))
-   else:
-      return "<pre>"+os.popen('cat /proc/cpuinfo').read()+"</pre>"
-      
-@app.route(basename+"/error/<int:errorcode>")
-def error(errorcode):
-   if errorcode == 1000:
-      return "This app is running as root user, which is dangerous";
-   elif errorcode == 1001:
-      return "Some other error"
-   else:
-      return "Unknown error"
+@app.route(basename+'/encode')
+def encode():
+   string = request.args['data'] # GET
+   string = base64.b64decode(string)
+   return string
 
-@app.route(basename+'/echo')
-def echo_help():
-   return "Please use as /echo/{some string}"
-
-@app.route(basename+'/echo/<string>')
-def echo(string):
-   return "You said: {}".format(string)
-
-@app.route(basename+"/isadmin")
-def isadmin():
-   if whoami().strip() == "root":
-      return "yes"
-   else:
-      return "No, you are: "+whoami()
-   
-#dynamic routing
-@app.route(basename+'/pow/<int:a>/<int:b>')
-def power(a, b):
-   try:
-      return "Pow of {}, {}: {}".format(a, b, math.pow(a,b))
-   except:
-      return "This is too much... "
-   
-
-@app.route(basename+'/path/<path:a>')
-def path_test(a):
-      return("<code>"+a+"</code>")
-
-
-@app.route(basename+"/math/sqrt", methods=['GET', 'POST'])
-def math_sqrt():
-   return {
-      "result": str(math.sqrt(int(request.form['num'])))
-   }
-
-
-
+# original string: something/asdkhbasd/asdjbasd
+# encoded string: something%2Fasdkhbasd%2Fasdjbasd
 
 
 if __name__ == '__main__':
