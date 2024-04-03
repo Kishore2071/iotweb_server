@@ -4,7 +4,8 @@ from src.User import User
 # uid = User.register("sibidharan", "insecure_password", "insecure_password")
 # print(type(uid))
 
-if User.login("sibidharan", "insecure_passord"):
+try:
+    User.login("sibidharan", "insecure_password1")
     print("Login Success")
-else:
-    print("Login Failed")
+except Exception as e:
+    print("Login Failed", e)

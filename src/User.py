@@ -30,6 +30,7 @@ class User:
             
             hashedpw = result['password']
             if bcrypt.checkpw(password.encode(), hashedpw):
+                # TODO: Register a session and return a session ID on successful login
                 return True
             else:
                 raise Exception("Incorrect Password")
@@ -39,7 +40,7 @@ class User:
 
     @staticmethod
     def register(username, password, confirm_password):
-
+        # TODO: Avoid duplicate signups
         if password != confirm_password:
             raise Exception("Password and Confirm Password do not match")
         
@@ -47,7 +48,7 @@ class User:
         salt = bcrypt.gensalt() # like a secret key that is embedded into the password for verification purposes while logging in
         password = bcrypt.hashpw(password, salt)
         id = users.insert_one({
-            "username": username,
+            "username": username, # TODO: Make as unique index to avoid duplicate entries
             "password": password,
             "register_time": time(),
             "active": False,

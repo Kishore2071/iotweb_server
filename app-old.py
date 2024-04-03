@@ -3,7 +3,7 @@ from flask import Flask, redirect, url_for, request, render_template
 import os
 import math
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates-old")
 basename = '/iotcloud'
 
 
@@ -16,6 +16,11 @@ def hello_world():
    }
    return render_template('helloworld.html', data=d)
    
+@app.route(basename+"/dashboard")
+def dashboard():
+   return render_template('dashboard.html', data={
+      "title": "IoT Dashboard"
+   })
 
 @app.route(basename+'/')
 def hello():
